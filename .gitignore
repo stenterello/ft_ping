@@ -1,0 +1,4 @@
+.idea
+ft_ping
+*.o
+**/*.o
