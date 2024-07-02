@@ -12,7 +12,9 @@
 #include <signal.h>
 #include <errno.h>
 
-#define _XOPEN_SOURCE 700
+#define _XOPEN_SOURCE		700
+
+#define ICMP_HEADER_SIZE	8
 
 /**
  * More flags to do:
@@ -23,29 +25,22 @@
 /*
  * @brief This struct contains all the configuration for the ping command.
  */
-typedef struct	s_options
+typedef struct	s_config
 {
 	int		verbose;
 	int		flood;
-	int		has_preload;
 	int		preload;
 	int		no_dns;
-	int		has_deadline;
 	int		deadline;
-	int		has_timeout;
 	int		timeout;
-	int		has_pattern;
 	char	*pattern;
 	int		bypass_routing;
-	int		has_packet_size;
 	int		packet_size;
-	int		has_timestamp;
 	int		timestamp_flag;
-	int		has_ttl;
 	int		ttl;
-	int		has_ip_timestamp;
 	int		ip_timestamp;
-}				t_options;
+	char	*dst_addr;
+}				t_config;
 
 /**
  * ICMP packet type section enum
@@ -81,48 +76,10 @@ enum Sections
 	MAX_VALUE
 };
 
-/**
- * ICMP packet code section enum
- */
-enum Code
-{
-	BAD_SPI = 0,
-	AUTHENTICATION_FAILED,
-	DECOMPRESSION_FAILED,
-	DECRYPTION_FAILED,
-	NEED_AUTHENTICATION,
-	NEED_AUTHORIZATION
-};
-
-/**
- * This struct is used to create the ICMP packet.
- */
-struct icmp_packet
-{
-	char	type;
-	char	code;
-	short	checksum;
-	char	identifier;
-	char	sequence_id;
-	short	pointer;
-	char	*payload;
-	size_t	size;
-};
-
-struct s_info
-{
-	struct icmp_packet	*packet;
-	t_options			*options;
-};
-
-
 extern int			about_to_quit;
 
-void 				apply_configuration(int argc, char **argv, struct s_info *info);
+void 				apply_configuration(int argc, char **argv, t_config *config);
 void 				fatal(const char *error);
-struct icmp_packet	default_packet();
-void				print_packet(struct icmp_packet *packet);
 void				handle_sigint();
-void				infinite(struct icmp_packet *packet, t_options *options);
 
 #endif // FT_PING_H

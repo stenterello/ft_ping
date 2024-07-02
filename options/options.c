@@ -126,89 +126,90 @@ static void		validate_arg(const char* arg, int key)
 
 static error_t	parser_function(int key, char *arg, struct argp_state *state)
 {
-	struct s_info*	info = state->input;
+	t_config	*config = state->input;
 	
 	switch (key)
 	{
 		case VERBOSE_FLAG:
 		{
-			info->options->verbose = 1;
+			config->verbose = 1;
 			break;
 		}
 		case FLOOD_FLAG:
 		{
-			info->options->flood = 1;
+			config->flood = 1;
 			break;
 		}
 		case PRELOAD_FLAG:
 		{
-			info->options->has_preload = 1;
 			validate_arg(arg, PRELOAD_FLAG);
-			info->options->preload = atoi(arg);
+			config->preload = atoi(arg);
 			break;
 		}
 		case NO_DNS_FLAG:
 		{
-			info->options->no_dns = 1;
+			config->no_dns = 1;
 			break;
 		}
 		case DEADLINE_FLAG:
 		{
-			info->options->has_deadline = 1;
 			validate_arg(arg, DEADLINE_FLAG);
-			info->options->deadline = atoi(arg);
+			config->deadline = atoi(arg);
 			break;
 		}
 		case TIMEOUT_FLAG:
 		{
-			info->options->has_timeout = 1;
 			validate_arg(arg, TIMEOUT_FLAG);
 			// add to config
 			break;
 		}
 		case PATTERN_FLAG:
 		{
-			info->options->has_pattern = 1;
 			validate_arg(arg, PATTERN_FLAG);
 			// add to config;
 			break;
 		}
 		case NO_ROUTING_FLAG:
 		{
-			info->options->bypass_routing = 1;
+			config->bypass_routing = 1;
 			break;
 		}
 		case PACKET_SIZE_FLAG:
 		{
-			info->options->has_packet_size = 1;
 			validate_arg(arg, PACKET_SIZE_FLAG);
 			// add to config
 			break;
 		}
 		case TIMESTAMP_FLAG:
 		{
-			info->options->has_timestamp = 1;
 			validate_arg(arg, TIMESTAMP_FLAG);
 			// add to config
 			break;
 		}
 		case TTL_FLAG:
 		{
-			info->options->has_ttl = 1;
 			validate_arg(arg, TTL_FLAG);
 			// add to config
 			break;
 		}
 		case IP_TIMESTAMP_FLAG:
 		{
-			info->options->has_ip_timestamp = 1;
 			validate_arg(arg, IP_TIMESTAMP_FLAG);
 			// add to config
 			break;
 		}
+		case ARGP_KEY_END:
+		{
+			if (config->dst_addr == NULL)
+			{
+				fatal("ping: usage error: Destination address required\n");
+			}
+			break;
+		}
 		default:
 		{
-			return ARGP_ERR_UNKNOWN;
+			config->dst_addr = arg;
+			break;
 		}
 	}
 
@@ -356,12 +357,8 @@ static void	define_flag(enum Flags flag_value, struct argp_option *flag)
 	}
 }
 
-void	apply_configuration(int argc, char **argv, struct s_info *info)
+void	apply_configuration(int argc, char **argv, t_config *config)
 {
-	memset(info->options, 0, sizeof(*(info->options)));
-	info->options->packet_size = 56;
-	info->options->preload = 3;
-
 	struct argp_option flags[FLAGS_MAX_VALUE + 1];
 
 	for (int i = 0; i <= FLAGS_MAX_VALUE; i++)
@@ -379,8 +376,9 @@ void	apply_configuration(int argc, char **argv, struct s_info *info)
 		.argp_domain = NULL
 	};
 
-	error_t res = argp_parse(&parser, argc, argv, 0, NULL, info);
-	printf("res is %d\n", res);
-
-	info->packet->size = info->options->packet_size;
+	error_t res = argp_parse(&parser, argc, argv, 0, NULL, config);
+	if (res)
+	{
+		fatal("add help print");
+	}
 }

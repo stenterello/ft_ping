@@ -1,10 +1,8 @@
 NAME		=	ft_ping
 
 SRCS		=	main.c \
-			forge.c \
 			options/options.c \
-			utils/utils.c \
-			strategies/default.c
+			utils/utils.c
 
 OBJS		=	${SRCS:.c=.o}
 CC		=	gcc
