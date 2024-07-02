@@ -208,7 +208,22 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 		}
 		default:
 		{
-			config->dst_addr = arg;
+			if (!arg)
+			{
+				break;
+			}
+			printf("default\n");
+			printf("strlen arg: %ld\n", strlen(arg));
+			if (config->dst_addr)
+			{
+				free(config->dst_addr);
+			}
+			config->dst_addr = malloc(sizeof(char) * (strlen(arg) + 1));
+			if (!config->dst_addr)
+			{
+				fatal("Malloc error\n");
+			}
+			strncpy(config->dst_addr, arg, strlen(arg));
 			break;
 		}
 	}

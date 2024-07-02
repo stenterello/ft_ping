@@ -27,6 +27,7 @@ void    print_configuration(t_config *config)
 
 char    *craft_packet(const t_config *config)
 {
+	printf("qui\n");
     char *packet = malloc(sizeof(char) * (config->packet_size + ICMP_HEADER_SIZE));
     if (!packet)
     {
@@ -49,13 +50,16 @@ char    *craft_packet(const t_config *config)
 
 void    run(const t_config *config)
 {
+	printf("qui\n");
     char    *buffer = craft_packet(config);
+	printf("qui\n");
 
 	struct sockaddr_in	dst_addr;
 
 	memset(&dst_addr, 0, sizeof(struct sockaddr_in));
 
 	dst_addr.sin_family = AF_INET;
+	printf("config->dst_addr: %s\n", config->dst_addr);
 	inet_aton(config->dst_addr, &dst_addr.sin_addr);
 
 	int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
@@ -70,6 +74,9 @@ void    run(const t_config *config)
 
 
 	close(sock);
+
+	free(buffer);
+	
 }
 
 t_config    default_config()
