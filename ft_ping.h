@@ -86,5 +86,7 @@ void 				fatal(const char *error);
 void				handle_sigint();
 t_config		    default_config();
 char 				*craft_packet(const t_config *config);
+void				run(const t_config *config);
+void				resolve_address(const t_config *config, struct sockaddr_in *dst_addr);
 
 #endif // FT_PING_H

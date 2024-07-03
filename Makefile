@@ -3,7 +3,9 @@ NAME			=	ft_ping
 SRCS			=	main.c \
 					options.c \
 					craft.c \
-					utils/utils.c
+					utils.c \
+					run.c \
+					resolve_address.c
 
 OBJS			=	${SRCS:.c=.o}
 CC				=	gcc
