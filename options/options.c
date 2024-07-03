@@ -212,8 +212,6 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 			{
 				break;
 			}
-			printf("default\n");
-			printf("strlen arg: %ld\n", strlen(arg));
 			if (config->dst_addr)
 			{
 				free(config->dst_addr);

@@ -9,7 +9,9 @@ CC		=	gcc
 FLAGS		=	-Wall -Werror -Wextra -g
 INCLUDE_DIRS	=	.
 
-all: $(OBJS)
+all: $(NAME)
+
+$(NAME): $(OBJS)
 	$(CC) $(FLAGS) $(OBJS) -o $(NAME) -I$(INCLUDE_DIRS)
 
 %.o: %.c
