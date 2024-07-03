@@ -15,9 +15,40 @@ void    first_line_info(const t_config *config, struct in_addr *resolved)
     printf("PING %s (%s): %d data bytes\n", config->dst_addr, to_print, config->packet_size);
 }
 
-int     calculate_interval(const struct timeval *t1, const struct timeval *t2)
+double     calculate_interval(const struct timeval *t1, const struct timeval *t2)
 {
     return ((t2->tv_sec * 1000 + t2->tv_usec / 1000) - (t1->tv_sec * 1000 + t1->tv_usec / 1000));
+}
+
+double      calculate_interval_micro(const struct timeval *t1, const struct timeval *t2)
+{
+    return ((t2->tv_sec * 1000000 + t2->tv_usec) - (t1->tv_sec * 1000000 + t1->tv_usec));
+}
+
+void    print_received_info(char *res, int len, char *latency_string)
+{
+    printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%s ms\n", len, "test", res[SEQ + 1], 1, latency_string);
+}
+
+char    *get_latency(struct timeval *last, struct timeval *latency)
+{
+    printf("last value is: \t\t%ld\n", last->tv_sec * 1000000 + last->tv_usec);
+    printf("latency value is: \t%ld\n", latency->tv_sec * 1000000 + latency->tv_usec);
+    double ms = calculate_interval_micro(last, latency);
+
+    printf("interval is: %f\n", ms);
+
+    char *ret = malloc(sizeof(char) * 6);
+    if (!ret)
+    {
+        fatal("Malloc error\n");
+    }
+
+    sprintf(ret, "%f", ms / 1000);
+
+    printf("microsecs are %s\n", ret);
+
+    return ret;
 }
 
 void    run(const t_config *config)
@@ -27,11 +58,13 @@ void    run(const t_config *config)
     struct sockaddr_in  local_addr;
     struct timeval      now;
     struct timeval      last;
+    struct timeval      latency;
 
     memset(&dst_addr, 0, sizeof(dst_addr));
     memset(&local_addr, 0, sizeof(local_addr));
     memset(&now, 0, sizeof(now));
     memset(&last, 0, sizeof(last));
+    memset(&latency, 0, sizeof(latency));
 
     resolve_address(config, &dst_addr);
 
@@ -104,11 +137,15 @@ void    run(const t_config *config)
             {
                 perror("recv");
             }
-            for (int i = 0; i < readbytes; i++)
-            {
-                printf("|%02u|", tmp_buff[i]);
-            }
-            printf("\n");
+            gettimeofday(&latency, NULL);
+            char *latency_string = get_latency(&last, &latency);
+            print_received_info(tmp_buff, readbytes, latency_string);
+            free(latency_string);
+            // for (int i = 0; i < readbytes; i++)
+            // {
+            //     printf("|%02u|", tmp_buff[i]);
+            // }
+            // printf("\n");
             
         }
     }
