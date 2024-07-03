@@ -51,49 +51,25 @@ char    *get_latency(struct timeval *last, struct timeval *latency)
     return ret;
 }
 
+
+
 void    run(const t_config *config)
 {
     char                *buffer = craft_packet(config);
     struct sockaddr_in  dst_addr;
-    struct sockaddr_in  local_addr;
     struct timeval      now;
     struct timeval      last;
     struct timeval      latency;
 
     memset(&dst_addr, 0, sizeof(dst_addr));
-    memset(&local_addr, 0, sizeof(local_addr));
     memset(&now, 0, sizeof(now));
     memset(&last, 0, sizeof(last));
     memset(&latency, 0, sizeof(latency));
 
     resolve_address(config, &dst_addr);
-
     first_line_info(config, &dst_addr.sin_addr);
 
-	int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
-	if (sock < 0)
-	{
-		perror("socket");
-	}
-
-    int one = 1;
-    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
-               &one, sizeof(one)))
-    {
-        perror("setsockopt");
-        exit(EXIT_FAILURE);
-    }
-
-    local_addr.sin_family = AF_INET;
-    local_addr.sin_addr.s_addr = INADDR_ANY;
-    local_addr.sin_port = IP_BIND_ADDRESS_NO_PORT;
-
-    if (bind(sock, (struct sockaddr*)&local_addr, sizeof(local_addr)) < 0)
-    {
-        perror("bind");
-        fatal("");
-    }
-
+    int sock = open_socket();
 
     fd_set   set;
 
@@ -142,21 +118,10 @@ void    run(const t_config *config)
             char *latency_string = get_latency(&last, &latency);
             print_received_info(tmp_buff, readbytes, latency_string);
             free(latency_string);
-            // for (int i = 0; i < readbytes; i++)
-            // {
-            //     printf("|%02u|", tmp_buff[i]);
-            // }
-            // printf("\n");
-            
         }
     }
 
-
-	// printf("sent %d bytes\n", bytes);
-
-
 	close(sock);
-
 	free(buffer);
 
     print_statistics(config);
