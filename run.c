@@ -51,11 +51,25 @@ char    *get_latency(struct timeval *last, struct timeval *latency)
     return ret;
 }
 
+void	send_ping(int socket, struct sockaddr_in *dst_addr,
+			const char *buffer, struct timeval *last,
+			const t_config *config)
+{
+	socklen_t	size = sizeof(*dst_addr);
 
+	gettimeofday(last, NULL);
+	
+	int bytes = sendto(socket, buffer, config->packet_size + ICMP_HEADER_SIZE, 0, (struct sockaddr*)dst_addr, size);
+        if (bytes < 0)
+        {
+            perror("sendto");
+        }
+}
 
 void    run(const t_config *config)
 {
     char                *buffer = craft_packet(config);
+    char		read_buffer[4096];
     struct sockaddr_in  dst_addr;
     struct timeval      now;
     struct timeval      last;
@@ -65,6 +79,7 @@ void    run(const t_config *config)
     memset(&now, 0, sizeof(now));
     memset(&last, 0, sizeof(last));
     memset(&latency, 0, sizeof(latency));
+    memset(read_buffer, 0, 4096);
 
     resolve_address(config, &dst_addr);
     first_line_info(config, &dst_addr.sin_addr);
@@ -73,7 +88,6 @@ void    run(const t_config *config)
 
     fd_set   set;
 
-	socklen_t	size = sizeof(dst_addr);
     FD_ZERO(&set);
     FD_SET(sock, &set);
     for ( ; about_to_quit == 0 ; )
@@ -81,22 +95,14 @@ void    run(const t_config *config)
         gettimeofday(&now, NULL);
         if ((now.tv_sec == 0 && now.tv_usec == 0) || calculate_interval(&last, &now) > DEFAULT_INTERVAL)
         {
-            gettimeofday(&last, NULL);
-	        int bytes = sendto(sock, buffer, config->packet_size + ICMP_HEADER_SIZE, 0, (struct sockaddr*)&dst_addr, size);
-            if (bytes < 0)
-            {
-                perror("sendto");
-            }
+	    send_ping(sock, &dst_addr, buffer, &last, config);
             buffer[SEQ + 1] = *(&buffer[SEQ + 1]) + 1;
-            printf("sent!\n");
+            printf("sent! %d\n", buffer[SEQ + 1]);
         }
         else
         {
             continue;
         }
-
-        char tmp_buff[1000];
-        memset(tmp_buff, 0, 1000);
         
         // TODO: add timeout to select
         int r = select(sock + 1, &set, NULL, NULL, NULL);
@@ -107,22 +113,21 @@ void    run(const t_config *config)
         }
         else if (r)
         {
-            printf("leggendo\n");
-            int readbytes = recv(sock, &tmp_buff[0], 1000, 0);
-            printf("read bytes: %d\n", readbytes);
+            int readbytes = recv(sock, read_buffer, 4096, 0);
             if (readbytes < 0)
             {
                 perror("recv");
             }
             gettimeofday(&latency, NULL);
             char *latency_string = get_latency(&last, &latency);
-            print_received_info(tmp_buff, readbytes, latency_string);
+            print_received_info(read_buffer, readbytes, latency_string);
             free(latency_string);
+	    memset(read_buffer, 0, 4096);
         }
     }
-
-	close(sock);
-	free(buffer);
+    
+    close(sock);
+    free(buffer);
 
     print_statistics(config);
 }
