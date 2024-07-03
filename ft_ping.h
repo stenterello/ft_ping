@@ -18,6 +18,7 @@
 #define _XOPEN_SOURCE		700
 
 #define ICMP_HEADER_SIZE	8
+#define DEFAULT_INTERVAL	1000
 
 /**
  * More flags to do:
