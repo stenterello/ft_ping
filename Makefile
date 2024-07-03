@@ -1,13 +1,14 @@
-NAME		=	ft_ping
+NAME			=	ft_ping
 
-SRCS		=	main.c \
-			options/options.c \
-			utils/utils.c
+SRCS			=	main.c \
+					options/options.c \
+					utils/utils.c
 
-OBJS		=	${SRCS:.c=.o}
-CC		=	gcc
-FLAGS		=	-Wall -Werror -Wextra -g
+OBJS			=	${SRCS:.c=.o}
+CC				=	gcc
+FLAGS			=	-Wall -Werror -Wextra -g
 INCLUDE_DIRS	=	.
+SANITIZER		=	-fsanitize=address
 
 all: $(NAME)
 
@@ -24,6 +25,9 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
+
+sanitize:
+	$(CC) $(FLAGS) $(SANITIZER) $(OBJS) -o $(NAME) -I$(INCLUDE_DIRS)
 
 .PHONY: all clean fclean re
 
