@@ -1,7 +1,8 @@
 NAME			=	ft_ping
 
 SRCS			=	main.c \
-					options/options.c \
+					options.c \
+					craft.c \
 					utils/utils.c
 
 OBJS			=	${SRCS:.c=.o}

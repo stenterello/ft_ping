@@ -84,5 +84,7 @@ extern int			about_to_quit;
 void 				apply_configuration(int argc, char **argv, t_config *config);
 void 				fatal(const char *error);
 void				handle_sigint();
+t_config		    default_config();
+char 				*craft_packet(const t_config *config);
 
 #endif // FT_PING_H
