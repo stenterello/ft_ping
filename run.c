@@ -94,6 +94,7 @@ void    run(const t_config *config)
         fatal("");
     }
 
+
     fd_set   set;
 
 	socklen_t	size = sizeof(dst_addr);
@@ -110,8 +111,8 @@ void    run(const t_config *config)
             {
                 perror("sendto");
             }
-            printf("sent!\n");
             buffer[SEQ + 1] = *(&buffer[SEQ + 1]) + 1;
+            printf("sent!\n");
         }
         else
         {

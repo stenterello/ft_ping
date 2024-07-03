@@ -6,7 +6,7 @@ t_config    default_config()
 
     ret.verbose = 0;
     ret.flood = 0;
-    ret.preload = 0;
+    ret.preload = 3;
     ret.no_dns = 0;
     ret.deadline = -1;
     ret.timeout = 10;
