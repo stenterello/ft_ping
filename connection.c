@@ -56,7 +56,38 @@ void    print_received_info(char *res, int len, char *latency_string, struct in_
 	printf("%d bytes from %s: icmp_seq=%d ttl=%d time=%s ms\n", len, addr_string, res[SEQ + 1], 1, latency_string);
 }
 
-void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *dst_addr)
+void    add_time_record(t_stats *stats, unsigned long microsec)
+{
+    t_time_record *ptr = stats->time_records;
+
+    if (!ptr)
+    {
+        stats->time_records = malloc(sizeof(t_time_record));
+        if (!stats->time_records)
+        {
+            fatal("Malloc error\n");
+        }
+        stats->time_records->time = microsec;
+        stats->time_records->next = NULL;
+    }
+    else
+    {
+        while (ptr->next != NULL)
+        {
+            ptr = ptr->next;
+        }
+        ptr->next = malloc(sizeof(t_time_record));
+        if (!ptr->next)
+        {
+            fatal("Malloc error\n");
+        }
+        ptr = ptr->next;
+        ptr->time = microsec;
+        ptr->next = NULL;
+    }
+}
+
+void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *dst_addr, t_stats *stats)
 {
 	struct timeval      latency;
 	char				read_buffer[4096];
@@ -80,6 +111,8 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 		}
 		gettimeofday(&latency, NULL);
 		char *latency_string = get_latency(last, &latency);
+        add_time_record(stats, convert_to_microsec(&latency));
+        stats->rx_num++;
 		print_received_info(read_buffer, readbytes, latency_string, dst_addr);
 		free(latency_string);
 		memset(read_buffer, 0, 4096);

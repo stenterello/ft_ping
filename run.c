@@ -39,6 +39,7 @@ void    run(const t_config *config)
 		{
 			send_ping(sock, &dst_addr, buffer, &last, config);
 			buffer[SEQ + 1] = *(&buffer[SEQ + 1]) + 1;
+			stats.tx_num++;
 			// printf("sent! %d\n", buffer[SEQ + 1]);
 		}
 		else
@@ -46,7 +47,7 @@ void    run(const t_config *config)
 			continue;
 		}
 		
-		read_reply(sock, &set, &last, &dst_addr.sin_addr);
+		read_reply(sock, &set, &last, &dst_addr.sin_addr, &stats);
 	}
 	
 	close(sock);
