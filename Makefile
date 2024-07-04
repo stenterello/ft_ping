@@ -6,7 +6,8 @@ SRCS			=	main.c \
 					utils.c \
 					run.c \
 					resolve_address.c \
-					connection.c
+					connection.c \
+					calculations.c
 
 OBJS			=	${SRCS:.c=.o}
 CC				=	gcc
