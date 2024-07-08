@@ -52,13 +52,14 @@ void printBits(size_t const size, void const * const ptr)
 
 void print_packet(char *buffer, const t_config *config)
 {
+    printf("Type: %2x\n", buffer[TYPE]);
+    printf("Code: %2x\n", buffer[CODE]);
+    printf("Checksum: %2x %2x\n", buffer[CHECKSUM], buffer[CHECKSUM + 1]);
+    printf("Identifier: %2x %2x\n", buffer[ID], buffer[ID + 1]);
+    printf("Sequence: %2x %2x\n", buffer[SEQ], buffer[SEQ + 1]);
     for (int i = 0; i < config->packet_size; i++)
     {
-        if (i % 8 == 0)
-        {
-            printf("\n");
-        }
-        printf("%u", buffer[i]);
+        printf("%2x", buffer[DATA + i]);
     }
     printf("\n");
 }
@@ -79,15 +80,18 @@ char    *craft_packet(const t_config *config)
     short identifier = 0x1234;
     short sequence = 0x0001;
 	// packet[SEQ] = sequence;
-    // packet[ID] = (char)(identifier << 8);
-    // packet[ID + 1] = (char)(identifier >> 8);
-	printBits(2, &sequence);
+    printf("Adding: %2x\n", identifier << 8);
+    printf("Adding: %2x\n", identifier >> 8);
+    packet[ID] = identifier << 8;
+    packet[ID + 1] = identifier >> 8;
+	// printBits(2, &sequence);
 	// sequence >>= 8;
-	printBits(2, &sequence);
-    packet[SEQ] = sequence >> 8;
+	// printBits(2, &sequence);
+    // packet[SEQ] = sequence >> 8;
+    printf("Printing...\n");
     print_packet(packet, config);
-    packet[SEQ + 1] = (char)(sequence << 8);
-    print_packet(packet, config);
+    // packet[SEQ + 1] = (char)(sequence << 8);
+    // print_packet(packet, config);
 	char *payload = default_payload(config->packet_size);
 	strncpy(&packet[DATA], payload, config->packet_size);
 	free(payload);
