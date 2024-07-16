@@ -42,7 +42,7 @@ void	calculate_rtt_statistics(t_stats *stats)
 
 void	print_statistics(const t_config *config, t_stats *stats)
 {
-	printf("\n--- %s ping statistics ---\n", config->dst_addr);
+	printf("--- %s ping statistics ---\n", config->dst_addr);
 	printf("%d packets transmitted, %d packets received, %0.3f%% packet loss\n", stats->tx_num, stats->rx_num, ((float)stats->tx_num / (float)stats->rx_num));
 	calculate_rtt_statistics(stats);
 	printf("round-trip min/avg/max/stddev = %.3ld/%.3ld/%.3ld/%.3f ms", stats->min, stats->avg, stats->max, 0.0);

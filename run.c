@@ -54,4 +54,11 @@ void    run(const t_config *config)
 	free(buffer);
 
 	print_statistics(config, &stats);
+	
+	for (t_time_record *ptr = stats.time_records; ptr->next != NULL; ptr = ptr->next)
+	{
+		t_time_record *to_free = ptr;
+		ptr = ptr->next;
+		free(to_free);
+	};
 }
