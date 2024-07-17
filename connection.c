@@ -6,10 +6,10 @@ int     open_socket()
     memset(&local_addr, 0, sizeof(local_addr));
 
     int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
-	if (sock < 0)
-	{
-		perror("socket");
-	}
+  	if (sock < 0)
+	  {
+	  	perror("socket");
+	  }
 
     int one = 1;
     if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
@@ -116,5 +116,6 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 		print_received_info(read_buffer, readbytes, latency_string, dst_addr);
 		free(latency_string);
 		memset(read_buffer, 0, 4096);
+        FD_CLR(r, set);
 	}
 }
