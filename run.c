@@ -10,7 +10,7 @@ void    first_line_info(const t_config *config, struct in_addr *resolved)
 	printf("PING %s (%s): %d data bytes\n", config->dst_addr, to_print, config->packet_size);
 }
 
-void    run(const t_config *config)
+void    run(t_config *config)
 {
 	char                *buffer = craft_packet(config);
 	struct sockaddr_in  dst_addr;
@@ -35,11 +35,15 @@ void    run(const t_config *config)
 	for ( ; about_to_quit == 0 ; )
 	{
 		gettimeofday(&now, NULL);
-		if ((now.tv_sec == 0 && now.tv_usec == 0) || calculate_interval(&last, &now) > DEFAULT_INTERVAL)
+		if ((config->preload > 0) || (now.tv_sec == 0 && now.tv_usec == 0) || calculate_interval(&last, &now) > DEFAULT_INTERVAL)
 		{
 			send_ping(sock, &dst_addr, buffer, &last, config);
 			buffer[SEQ + 1] = *(&buffer[SEQ + 1]) + 1;
 			stats.tx_num++;
+            if (config->preload)
+            {
+                config->preload--;
+            }
 		}
 		else
 		{

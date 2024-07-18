@@ -52,11 +52,12 @@ void printBits(size_t const size, void const * const ptr)
 
 void print_packet(char *buffer, const t_config *config)
 {
-    printf("Type: %2x\n", buffer[TYPE]);
-    printf("Code: %2x\n", buffer[CODE]);
-    printf("Checksum: %2x %2x\n", buffer[CHECKSUM], buffer[CHECKSUM + 1]);
-    printf("Identifier: %2x %2x\n", buffer[ID], buffer[ID + 1]);
-    printf("Sequence: %2x %2x\n", buffer[SEQ], buffer[SEQ + 1]);
+    printf("Type:\t\t|   %2x|\n", buffer[TYPE]);
+    printf("Code:\t\t|   %2x|\n", buffer[CODE]);
+    printf("Checksum:\t|%2x %2x|\n", buffer[CHECKSUM], buffer[CHECKSUM + 1]);
+    printf("Identifier:\t|%2x %2x|\n", buffer[ID], buffer[ID + 1]);
+    printf("Sequence:\t|%2x %2x|\n", buffer[SEQ], buffer[SEQ + 1]);
+    printf("Data: ");
     for (int i = 0; i < config->packet_size; i++)
     {
         printf("%2x", buffer[DATA + i]);

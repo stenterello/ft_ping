@@ -111,11 +111,11 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 		}
 		gettimeofday(&latency, NULL);
 		char *latency_string = get_latency(last, &latency);
-        add_time_record(stats, convert_to_microsec(&latency));
-        stats->rx_num++;
+        	add_time_record(stats, convert_to_microsec(&latency));
+        	stats->rx_num++;
 		print_received_info(read_buffer, readbytes, latency_string, dst_addr);
 		free(latency_string);
 		memset(read_buffer, 0, 4096);
-        FD_CLR(r, set);
+        	FD_CLR(r, set);
 	}
 }

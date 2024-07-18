@@ -103,7 +103,7 @@ void 				fatal(const char *error);
 void				handle_sigint();
 t_config		    default_config();
 char 				*craft_packet(const t_config *config);
-void				run(const t_config *config);
+void				run(t_config *config);
 void				resolve_address(const t_config *config, struct sockaddr_in *dst_addr);
 int					open_socket();
 void				send_ping(int socket, struct sockaddr_in *dst_addr,
