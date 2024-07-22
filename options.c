@@ -370,6 +370,21 @@ static void	define_flag(enum Flags flag_value, struct argp_option *flag)
 	}
 }
 
+void    check_permissions(t_config *config)
+{
+    if (getuid() != 0)
+    {
+        if (config->preload > 3)
+        {
+            fatal("Print error message TODOOOO\n");
+        }
+        else if (config->flood)
+        {
+            fatal("Print error message TODOOOO\n");
+        }
+    }
+}
+
 void	apply_configuration(int argc, char **argv, t_config *config)
 {
 	struct argp_option flags[FLAGS_MAX_VALUE + 1];
@@ -394,4 +409,6 @@ void	apply_configuration(int argc, char **argv, t_config *config)
 	{
 		fatal("add help print");
 	}
+
+    check_permissions(config);
 }
