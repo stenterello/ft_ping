@@ -41,7 +41,7 @@ void    run(t_config *config)
 	{
 		gettimeofday(&now, NULL);
 	
-        if ((config->preload > 0) || stats.tx_num == 0 || calculate_interval(&last, &now) > DEFAULT_INTERVAL)
+        if ((config->flood) || (config->preload > 0) || stats.tx_num == 0 || calculate_interval(&last, &now) > DEFAULT_INTERVAL)
 		{
 			send_ping(sock, &dst_addr, buffer, &last, config);
 			buffer[SEQ + 1] = *(&buffer[SEQ + 1]) + 1;

@@ -7,9 +7,9 @@ int     open_socket()
 
     int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP);
   	if (sock < 0)
-	  {
-	  	perror("socket");
-	  }
+	{
+	    perror("socket");
+	}
 
     int one = 1;
     if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
@@ -99,7 +99,7 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 	int r = select(socket + 1, set, NULL, NULL, NULL);
 	if (r == -1)
 	{
-        if (errno == EINTR && about_to_quit != 1)
+        if (errno != EINTR && about_to_quit != 1)
         {
 		    perror("select");
 		    fatal("");
@@ -118,7 +118,6 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
         stats->rx_num++;
         if (!config->flood)
         {
-            printf("here\n");
 		    print_received_info(read_buffer, readbytes, latency_string, dst_addr);
         }
 		free(latency_string);
