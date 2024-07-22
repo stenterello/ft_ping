@@ -31,8 +31,13 @@ Currently, I'm interested in handle this set of options:
 - -?, --help                 Give this help list
       --usage                Give a short usage message
 
+Actually supporting:
+- -l {*preload*}
+
+
 Next *todos*:
 
 - craft checksum before sending packet;
-- handle preload with -l option;
+- check identifier and sequence correctness;
+- handle flood with -f option;
 

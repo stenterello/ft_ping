@@ -3,3 +3,4 @@
 ft_ping
 *.o
 **/*.o
+tags
