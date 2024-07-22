@@ -109,7 +109,7 @@ int					open_socket();
 void				send_ping(int socket, struct sockaddr_in *dst_addr,
 								const char *buffer, struct timeval *last,
 								const t_config *config);
-void				read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *dst_addr, t_stats *stats);
+void				read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *dst_addr, t_stats *stats, t_config *config);
 void				print_received_info(char *res, int len, char *latency_string, struct in_addr *dst_addr);
 double				calculate_interval(const struct timeval *t1, const struct timeval *t2);
 double				calculate_interval_micro(const struct timeval *t1, const struct timeval *t2);

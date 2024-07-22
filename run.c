@@ -40,7 +40,8 @@ void    run(t_config *config)
     for ( ; about_to_quit == 0 ; )
 	{
 		gettimeofday(&now, NULL);
-		if ((config->preload > 0) || (now.tv_sec == 0 && now.tv_usec == 0) || calculate_interval(&last, &now) > DEFAULT_INTERVAL)
+	
+        if ((config->preload > 0) || stats.tx_num == 0 || calculate_interval(&last, &now) > DEFAULT_INTERVAL)
 		{
 			send_ping(sock, &dst_addr, buffer, &last, config);
 			buffer[SEQ + 1] = *(&buffer[SEQ + 1]) + 1;
@@ -50,12 +51,8 @@ void    run(t_config *config)
                 config->preload--;
             }
 		}
-		/*else
-		{
-			continue;
-		}*/
 		
-		read_reply(sock, &set, &last, &dst_addr.sin_addr, &stats);
+		read_reply(sock, &set, &last, &dst_addr.sin_addr, &stats, config);
 	}
 	
 	close(sock);

@@ -87,7 +87,7 @@ void    add_time_record(t_stats *stats, unsigned long microsec)
     }
 }
 
-void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *dst_addr, t_stats *stats)
+void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *dst_addr, t_stats *stats, t_config *config)
 {
 	struct timeval      latency;
 	char				read_buffer[4096];
@@ -99,8 +99,11 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 	int r = select(socket + 1, set, NULL, NULL, NULL);
 	if (r == -1)
 	{
-		perror("select");
-		fatal("");
+        if (errno == EINTR && about_to_quit != 1)
+        {
+		    perror("select");
+		    fatal("");
+        }
 	}
 	else if (r)
 	{
@@ -111,11 +114,15 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 		}
 		gettimeofday(&latency, NULL);
 		char *latency_string = get_latency(last, &latency);
-        	add_time_record(stats, convert_to_microsec(&latency));
-        	stats->rx_num++;
-		print_received_info(read_buffer, readbytes, latency_string, dst_addr);
+        add_time_record(stats, convert_to_microsec(&latency));
+        stats->rx_num++;
+        if (!config->flood)
+        {
+            printf("here\n");
+		    print_received_info(read_buffer, readbytes, latency_string, dst_addr);
+        }
 		free(latency_string);
 		memset(read_buffer, 0, 4096);
-        	FD_CLR(r, set);
+        FD_CLR(r, set);
 	}
 }
