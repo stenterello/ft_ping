@@ -25,10 +25,15 @@ void    run(t_config *config)
 	struct timeval      now;
 	struct timeval      last;
 	t_stats				stats;
+	double				interval = DEFAULT_INTERVAL;
 
     prepare_structs(&dst_addr, &now, &last, &stats);
 	resolve_address(config, &dst_addr);
 	first_line_info(config, &dst_addr.sin_addr);
+	if (config->flood)
+	{
+		interval = 100;
+	}
 
 	int sock = open_socket();
 
@@ -36,13 +41,19 @@ void    run(t_config *config)
 
 	FD_ZERO(&set);
 	FD_SET(sock, &set);
-	
+
     for ( ; about_to_quit == 0 ; )
 	{
+	    // printf("Inizio ciclo\n");
 		gettimeofday(&now, NULL);
-	
-        if ((config->flood) || (config->preload > 0) || stats.tx_num == 0 || calculate_interval(&last, &now) > DEFAULT_INTERVAL)
+
+		// printf("(config->preload > 0): %d\n", (config->preload > 0));
+		// printf("stats.tx_num == 0: %d\n", stats.tx_num == 0);
+		// printf("calculate_interval(&last, &now): %f\n", calculate_interval(&last, &now));
+		// printf("interval: %f\n", interval);
+        if ((config->preload > 0) || stats.tx_num == 0 || calculate_interval(&last, &now) > interval)
 		{
+		    // printf("sending\n");
 			send_ping(sock, &dst_addr, buffer, &last, config);
 			buffer[SEQ + 1] = *(&buffer[SEQ + 1]) + 1;
 			stats.tx_num++;
@@ -50,16 +61,18 @@ void    run(t_config *config)
             {
                 config->preload--;
             }
+            read_reply(sock, &set, &last, &dst_addr.sin_addr, &stats, config);
 		}
-		
-		read_reply(sock, &set, &last, &dst_addr.sin_addr, &stats, config);
+        // printf("read\n");
+		// printf("%f\n", calculate_interval(&last, &now));
+
 	}
-	
+
 	close(sock);
 	free(buffer);
 
 	print_statistics(config, &stats);
-	
+
 	/* for (t_time_record *ptr = stats.time_records; ptr->next != NULL; ptr = ptr->next)
 	{
 		t_time_record *to_free = ptr;

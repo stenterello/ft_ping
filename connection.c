@@ -39,7 +39,7 @@ void	send_ping(int socket, struct sockaddr_in *dst_addr,
 	socklen_t	size = sizeof(*dst_addr);
 
 	gettimeofday(last, NULL);
-	
+
 	int bytes = sendto(socket, buffer, config->packet_size + ICMP_HEADER_SIZE, 0, (struct sockaddr*)dst_addr, size);
 	if (bytes < 0)
 	{
@@ -112,6 +112,7 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 		{
 			perror("recv");
 		}
+		// printf("Fatto\n");
 		gettimeofday(&latency, NULL);
 		char *latency_string = get_latency(last, &latency);
         add_time_record(stats, convert_to_microsec(&latency));
@@ -124,4 +125,5 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 		memset(read_buffer, 0, 4096);
         FD_CLR(r, set);
 	}
+	// printf("Uscito\n");
 }
