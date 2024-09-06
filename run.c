@@ -1,4 +1,5 @@
 #include "ft_ping.h"
+#include <stdio.h>
 
 int	about_to_quit = 0;
 
@@ -7,7 +8,9 @@ void    first_line_info(const t_config *config, struct in_addr *resolved)
 	char to_print[INET_ADDRSTRLEN];
 	inet_ntop(AF_INET, resolved, to_print, INET_ADDRSTRLEN);
 
-	printf("PING %s (%s): %d data bytes\n", config->dst_addr, to_print, config->packet_size);
+	fflush(stdout);
+	printf("PING %s (%s): %d data bytes", config->dst_addr, to_print, config->packet_size);
+	printf("\n");
 }
 
 void    prepare_structs(struct sockaddr_in *dst_addr, struct timeval *now, struct timeval *last, t_stats *stats)
@@ -28,6 +31,7 @@ void    run(t_config *config)
 	double				interval = DEFAULT_INTERVAL;
 
     prepare_structs(&dst_addr, &now, &last, &stats);
+	setvbuf(stdout, NULL, _IOLBF, 0);
 	resolve_address(config, &dst_addr);
 	first_line_info(config, &dst_addr.sin_addr);
 	if (config->flood)
