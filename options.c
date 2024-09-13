@@ -5,6 +5,7 @@
 
 // FLAGS
 #define VERBOSE_FLAG		'v'
+#define COUNT_FLAG	     	'c'
 #define FLOOD_FLAG			'f'
 #define PRELOAD_FLAG		'l'
 #define NO_DNS_FLAG			'n'
@@ -26,6 +27,7 @@
  */
 enum Flags {
 	VERBOSE = 0,
+	COUNT,
 	FLOOD,
 	PRELOAD,
 	NO_DNS,
@@ -202,7 +204,7 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 		{
 			if (config->dst_addr == NULL)
 			{
-				fatal("ft_ping: missing host operand\nTry 'ft_ping --help' or 'ft_ping --usage' for more information.\n");
+				error(EXIT_FAILURE, 0, "missing host operand\nTry 'ft_ping --help' or 'ft_ping --usage' for more information.\n");
 			}
 			break;
 		}
@@ -242,6 +244,16 @@ static void	define_flag(enum Flags flag_value, struct argp_option *flag)
 			flag->doc = "Verbose output";
 			flag->group = 0;
 			break;
+		}
+		case COUNT:
+		{
+            flag->name = NULL;
+    		flag->key = 'c';
+    		flag->arg = "NUMBER";
+    		flag->flags = 0;
+    		flag->doc = "stop after sending NUMBER packets";
+    		flag->group = 0;
+    		break;
 		}
 		case FLOOD:
 		{
