@@ -1,8 +1,9 @@
 #include "ft_ping.h"
+#include <unistd.h>
 
 void	fatal(const char *error)
 {
-	write(2, error, strlen(error));
+	write(STDERR_FILENO, error, strlen(error));
 	exit(1);
 }
 
@@ -24,4 +25,3 @@ void	handle_sigint()
 		perror(strerror(errno));
 	}
 }
-

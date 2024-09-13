@@ -1,4 +1,5 @@
 #include "ft_ping.h"
+#include "error.h"
 
 void    resolve_address(const t_config *config, struct sockaddr_in *dst_addr)
 {
@@ -14,7 +15,9 @@ void    resolve_address(const t_config *config, struct sockaddr_in *dst_addr)
     getaddrinfo(config->dst_addr, NULL, &hint, &addrinfo);
     if (addrinfo == NULL)
     {
-        fatal("ft_ping: unknown host\n");
+        error(EXIT_FAILURE, 0, "unknown host");
+        exit(1);
+        // fatal("ft_ping: unknown host\n");
     }
 
     inet_ntop(AF_INET, &((struct sockaddr_in *)addrinfo->ai_addr)->sin_addr, addr_buf, sizeof(addr_buf));

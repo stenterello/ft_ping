@@ -89,7 +89,7 @@ static void		validate_arg(const char* arg, int key)
 			{
 				sprintf(error_string,
 						"ft_ping: invalid argument: '%s': out of range: 0 <= value <= 2147483647\n", arg);
-				fatal(error_string);	
+				fatal(error_string);
 			}
 			break;
 		}
@@ -127,7 +127,7 @@ static void		validate_arg(const char* arg, int key)
 static error_t	parser_function(int key, char *arg, struct argp_state *state)
 {
 	t_config	*config = state->input;
-	
+
 	switch (key)
 	{
 		case VERBOSE_FLAG:
@@ -202,7 +202,7 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 		{
 			if (config->dst_addr == NULL)
 			{
-				fatal("ping: usage error: Destination address required\n");
+				fatal("ft_ping: missing host operand\nTry 'ft_ping --help' or 'ft_ping --usage' for more information.\n");
 			}
 			break;
 		}
