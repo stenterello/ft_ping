@@ -63,44 +63,33 @@ static void		validate_arg(const char* arg, int key)
 
 	if (errno)
 	{
-		sprintf(error_string, "ft_ping: invalid argument: '%s': %s\n", arg, strerror(errno));
-		fatal(error_string);
+	    error(EXIT_FAILURE, 0, "invalid argument: '%s': %s\n", arg, strerror(errno));
 	}
 
 	switch (key)
 	{
 		case PRELOAD_FLAG:
 		{
-			if (value < 1 || value > SHRT_MAX)
+		    if (!only_digits(arg))
 			{
-				sprintf(error_string,
-						"ft_ping: invalid argument: '%s': out of range 1 <= value <= 65536\n", arg);
-				fatal(error_string);
-			}
-			else if (value > 3)
-			{
-				sprintf(error_string,
-						"ft_ping: cannot set preload to value greater than 3: %s\n", arg);
-				fatal(error_string);
+			    error(EXIT_FAILURE, 0, "invalid preload value (%s)", arg);
 			}
 			break;
 		}
 		case DEADLINE_FLAG:
-		{
-			if (value < 0 || value > 2147483647)
-			{
-				sprintf(error_string,
-						"ft_ping: invalid argument: '%s': out of range: 0 <= value <= 2147483647\n", arg);
-				fatal(error_string);
-			}
-			break;
-		}
 		case TIMEOUT_FLAG:
 		{
-			if (value < 0 || value > INT_MAX / 1000)
+            if (!only_digits(arg))
+            {
+                error(EXIT_FAILURE, 0, "invalid vlaue (`%s' near `%s')", arg, arg);
+            }
+			else if (value < 1)
 			{
-				sprintf(error_string, "ft_ping: bad linger time: %s\n", arg);
-				fatal(error_string);
+			    error(EXIT_FAILURE, 0, "option value too small: %s", arg);
+			}
+			else if (value > 2147483647)
+			{
+			    error(EXIT_FAILURE, 0, "option value too big: %s", arg);
 			}
 			break;
 		}
@@ -108,14 +97,11 @@ static void		validate_arg(const char* arg, int key)
 		{
 			if (!only_digits(optarg))
 			{
-				sprintf(error_string, "ft_ping: invalid argument: '%s'\n", arg);
-				fatal(error_string);
+			    error(EXIT_FAILURE, 0, "invalid vlaue (`%s' near `%s')", arg, arg);
 			}
-			if (value < 0 || value > 2147483647)
+			else if (value < 0 || value > 65400)
 			{
-				sprintf(error_string,
-						"ft_ping: invalid argument: '%s': out of range 0 <= value <= 2147483647\n", arg);
-				fatal(error_string);
+			    error(EXIT_FAILURE, 0, "option value too big: %s", arg);
 			}
 			break;
 		}
@@ -204,7 +190,7 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 		{
 			if (config->dst_addr == NULL)
 			{
-				error(EXIT_FAILURE, 0, "missing host operand\nTry 'ft_ping --help' or 'ft_ping --usage' for more information.\n");
+				error(EXIT_FAILURE, 0, "missing host operand\nTry 'ft_ping --help' or 'ft_ping --usage' for more information.");
 			}
 			break;
 		}
