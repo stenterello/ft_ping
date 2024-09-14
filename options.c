@@ -18,7 +18,7 @@
 #define TTL_FLAG			1
 #define IP_TIMESTAMP_FLAG	2
 
-#define OPT_STRING			"vfl:nw:W:p:rs:T:"
+#define OPT_STRING			"vcfl:nw:W:p:rs:T:"
 
 #define MAX_PATTERN			16;
 
