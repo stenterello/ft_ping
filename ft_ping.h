@@ -33,6 +33,7 @@
 typedef struct	s_config
 {
 	int		verbose;
+	int     count;
 	int		flood;
 	int		preload;
 	int		no_dns;

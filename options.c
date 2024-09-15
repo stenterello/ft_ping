@@ -18,7 +18,7 @@
 #define TTL_FLAG			1
 #define IP_TIMESTAMP_FLAG	2
 
-#define OPT_STRING			"vcfl:nw:W:p:rs:T:"
+#define OPT_STRING			"vfc:l:nw:W:p:rs:T:"
 
 #define MAX_PATTERN			16;
 
@@ -76,6 +76,14 @@ static void		validate_arg(const char* arg, int key)
 			}
 			break;
 		}
+		case COUNT_FLAG:
+		{
+		    if (!only_digits(arg))
+			{
+			    error(EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", arg, arg);
+			}
+		    break;
+		}
 		case DEADLINE_FLAG:
 		case TIMEOUT_FLAG:
 		{
@@ -97,7 +105,7 @@ static void		validate_arg(const char* arg, int key)
 		{
 			if (!only_digits(optarg))
 			{
-			    error(EXIT_FAILURE, 0, "invalid vlaue (`%s' near `%s')", arg, arg);
+			    error(EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", arg, arg);
 			}
 			else if (value < 0 || value > 65400)
 			{
@@ -121,6 +129,12 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 		case VERBOSE_FLAG:
 		{
 			config->verbose = 1;
+			break;
+		}
+		case COUNT_FLAG:
+		{
+		    validate_arg(arg, COUNT_FLAG);
+		    config->count = 1;
 			break;
 		}
 		case FLOOD_FLAG:
@@ -186,11 +200,15 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 			// add to config
 			break;
 		}
+		case ARGP_KEY_NO_ARGS:
 		case ARGP_KEY_END:
 		{
 			if (config->dst_addr == NULL)
 			{
-				error(EXIT_FAILURE, 0, "missing host operand\nTry 'ft_ping --help' or 'ft_ping --usage' for more information.");
+				// error(EXIT_FAILURE, 0, "missing host operand\nTry 'ft_ping --help' or 'ft_ping --usage' for more information.");
+				// error(EXIT_FAILURE, 0, "missing host operand\n");
+			    argp_error(state, "missing host operand");
+				fatal("");
 			}
 			break;
 		}
@@ -402,6 +420,7 @@ void	apply_configuration(int argc, char **argv, t_config *config)
 		.help_filter = NULL,
 		.argp_domain = NULL
 	};
+
 
 	error_t res = argp_parse(&parser, argc, argv, 0, NULL, config);
 	if (res)

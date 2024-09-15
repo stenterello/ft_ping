@@ -5,6 +5,7 @@ t_config    default_config()
     t_config    ret;
 
     ret.verbose = 0;
+    ret.count = 0;
     ret.flood = 0;
     ret.preload = 0;
     ret.no_dns = 0;
