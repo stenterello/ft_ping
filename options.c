@@ -89,7 +89,7 @@ static void		validate_arg(const char* arg, int key)
 		{
             if (!only_digits(arg))
             {
-                error(EXIT_FAILURE, 0, "invalid vlaue (`%s' near `%s')", arg, arg);
+                error(EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", arg, arg);
             }
 			else if (value < 1)
 			{
