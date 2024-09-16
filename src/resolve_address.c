@@ -11,10 +11,9 @@ void    resolve_address(const t_config *config, struct sockaddr_in *dst_addr)
 
     hint.ai_family = AF_INET;
 
-    getaddrinfo(config->dst_addr, NULL, &hint, &addrinfo);
-    if (addrinfo == NULL)
-    {
-        error(EXIT_FAILURE, 0, "unknown host");
+	if (getaddrinfo(config->dst_addr, NULL, &hint, &addrinfo) != 0)
+	{
+		error(EXIT_FAILURE, 0, "unknown host");
     }
 
     inet_ntop(AF_INET, &((struct sockaddr_in *)addrinfo->ai_addr)->sin_addr, addr_buf, sizeof(addr_buf));

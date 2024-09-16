@@ -54,10 +54,54 @@ static int only_digits(const char* str)
 	return 1;
 }
 
+static char* get_router_name()
+{
+	FILE* file = fopen("/etc/resolv.conf", "r");
+	if (!file)
+	{
+		return NULL;
+	}
+
+	char line[256];
+	while (fgets(line, sizeof(line), file))
+	{
+		if (strncmp(line, "search", 6) == 0)
+		{
+			char *domain = strtok(line + 7, " \n");
+			if (domain)
+			{
+				char *ret = malloc(sizeof(char) * 256);
+				if (!ret)
+				{
+					fatal("Malloc error\n");
+				}
+				strncpy(ret, domain, 256);
+				ret[255] = 0;
+				fclose(file);
+				return ret;
+			}
+		}
+	}
+	fclose(file);
+	return NULL;
+}
+
+static const char*	first_non_digit(const char *arg)
+{
+	for (int i = 0; arg[i]; i++)
+	{
+		if (!isdigit(arg[i]))
+		{
+			return &arg[i];
+		}
+	}
+	return NULL;
+}
+
 static void		validate_arg(const char* arg, int key)
 {
 	char error_string[300];
-	const long long value = atoll(arg);
+	const long long value = strtoll(arg, NULL, 10);
 
 	memset(error_string, 0, sizeof(error_string));
 
@@ -72,7 +116,7 @@ static void		validate_arg(const char* arg, int key)
 		{
 		    if (!only_digits(arg))
 			{
-			    error(EXIT_FAILURE, 0, "invalid preload value (%s)", arg);
+			    error(EXIT_FAILURE, 0, "invalid preload value (%s)", first_non_digit(arg));
 			}
 			break;
 		}
@@ -80,22 +124,22 @@ static void		validate_arg(const char* arg, int key)
 		{
 		    if (!only_digits(arg))
 			{
-			    error(EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", arg, arg);
+			    error(EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", arg, first_non_digit(arg));
 			}
 		    break;
 		}
 		case DEADLINE_FLAG:
 		case TIMEOUT_FLAG:
 		{
-            if (!only_digits(arg))
+			if (!only_digits(arg))
             {
-                error(EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", arg, arg);
+                error(EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", arg, first_non_digit(arg));
             }
-			else if (value < 1)
+			else if (value == 0)
 			{
 			    error(EXIT_FAILURE, 0, "option value too small: %s", arg);
 			}
-			else if (value > 2147483647)
+			else if (value > 2147483647 || value < 0)
 			{
 			    error(EXIT_FAILURE, 0, "option value too big: %s", arg);
 			}
@@ -103,13 +147,29 @@ static void		validate_arg(const char* arg, int key)
 		}
 		case PACKET_SIZE_FLAG:
 		{
-			if (!only_digits(optarg))
+			if (!only_digits(arg))
 			{
-			    error(EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", arg, arg);
+			    error(EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", arg, first_non_digit(arg));
 			}
 			else if (value < 0 || value > 65400)
 			{
 			    error(EXIT_FAILURE, 0, "option value too big: %s", arg);
+			}
+			break;
+		}
+		case TTL_FLAG:
+		{
+			if (!only_digits(arg))
+			{
+				error(EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", arg, first_non_digit(arg));
+			}
+			else if (value == 0)
+			{
+				error(EXIT_FAILURE, 0, "option value too small: %s", arg);
+			}
+			else if (value > 255 || value < 0)
+			{
+				error(EXIT_FAILURE, 0, "option value too big: %s", arg);
 			}
 			break;
 		}
@@ -205,8 +265,6 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 		{
 			if (config->dst_addr == NULL)
 			{
-				// error(EXIT_FAILURE, 0, "missing host operand\nTry 'ft_ping --help' or 'ft_ping --usage' for more information.");
-				// error(EXIT_FAILURE, 0, "missing host operand\n");
 			    argp_error(state, "missing host operand");
 				fatal("");
 			}
@@ -214,20 +272,36 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 		}
 		default:
 		{
-			if (!arg)
+			if (!arg || config->dst_addr)
 			{
 				break;
 			}
-			if (config->dst_addr)
+			char *tmp = NULL;
+			if (strchr(arg, '.') == NULL)
 			{
-				free(config->dst_addr);
+				char* router_name = get_router_name();
+				tmp = malloc(sizeof(char) * (strlen(arg) + strlen(router_name) + 1));
+				if (!tmp)
+				{
+					fatal("Malloc error\n");
+				}
+				strncpy(tmp, arg, strlen(arg) + 1);
+				strcat(tmp, ".");
+				strcat(tmp, router_name);
+				free(router_name);
+				config->dst_addr = malloc(sizeof(char) * (strlen(tmp) + 1));
+				if (!config->dst_addr) {
+					fatal("Malloc error\n");
+				}
+				strncpy(config->dst_addr, tmp, strlen(tmp) + 1);
+				free(tmp);
+			} else {
+				config->dst_addr = malloc(sizeof(char) * (strlen(arg) + 1));
+				if (!config->dst_addr) {
+					fatal("Malloc error\n");
+				}
+				strncpy(config->dst_addr, arg, strlen(arg) + 1);
 			}
-			config->dst_addr = malloc(sizeof(char) * (strlen(arg) + 1));
-			if (!config->dst_addr)
-			{
-				fatal("Malloc error\n");
-			}
-			strncpy(config->dst_addr, arg, strlen(arg));
 			break;
 		}
 	}
