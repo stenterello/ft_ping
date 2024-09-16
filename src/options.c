@@ -1,4 +1,4 @@
-#include "ft_ping.h"
+#include <ft_ping.h>
 #include <argp.h>
 #include <limits.h>
 #include <ctype.h>

@@ -1,4 +1,4 @@
-#include "ft_ping.h"
+#include <ft_ping.h>
 
 t_config    default_config()
 {

@@ -1,4 +1,4 @@
-#include "ft_ping.h"
+#include <ft_ping.h>
 
 double	calculate_interval(const struct timeval *t1, const struct timeval *t2)
 {

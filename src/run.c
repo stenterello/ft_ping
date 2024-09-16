@@ -1,4 +1,4 @@
-#include "ft_ping.h"
+#include <ft_ping.h>
 #include <stdio.h>
 
 int	about_to_quit = 0;

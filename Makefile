@@ -1,6 +1,6 @@
 NAME			=	ft_ping
 
-SRCS			=	main.c \
+SRC				=	main.c \
 					options.c \
 					craft.c \
 					utils.c \
@@ -9,10 +9,11 @@ SRCS			=	main.c \
 					connection.c \
 					calculations.c
 
+SRCS			=	${addprefix src/, $(SRC)}
 OBJS			=	${SRCS:.c=.o}
 CC				=	gcc
 FLAGS			=	-Wall -Werror -Wextra -g
-INCLUDE_DIRS	=	.
+INCLUDE_DIRS	=	./include
 SANITIZER		=	-fsanitize=address
 
 all: $(NAME)

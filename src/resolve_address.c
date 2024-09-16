@@ -1,4 +1,4 @@
-#include "ft_ping.h"
+#include <ft_ping.h>
 
 void    resolve_address(const t_config *config, struct sockaddr_in *dst_addr)
 {

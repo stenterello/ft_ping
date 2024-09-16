@@ -1,4 +1,4 @@
-#include "ft_ping.h"
+#include <ft_ping.h>
 #include <unistd.h>
 
 void	fatal(const char *error)
