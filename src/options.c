@@ -194,7 +194,7 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 		case COUNT_FLAG:
 		{
 		    validate_arg(arg, COUNT_FLAG);
-		    config->count = 1;
+		    config->count = strtoll(arg, NULL, 10);
 			break;
 		}
 		case FLOOD_FLAG:

@@ -71,7 +71,8 @@ void    run(t_config *config)
             read_reply(sock, &set, &last, &dst_addr.sin_addr, &stats, config);
 		}
 
-		if (config->count && stats.rx_num == config->count)
+		if (config->count &&
+			((stats.rx_num == config->count))) // TOADD: Exit if last reading has exceeded timeout
 		{
 			about_to_quit = 1;
 		}

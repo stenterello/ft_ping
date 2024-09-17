@@ -14,7 +14,7 @@ void    resolve_address(t_config *config, struct sockaddr_in *dst_addr)
     if (!strncmp(config->dst_addr, "localhost", 9))
     {
         free(config->dst_addr);
-        config->dst_addr = malloc(sizeof(char) * 16);
+        config->dst_addr = malloc(sizeof(char) * 17);
         if (!config->dst_addr)
         {
             fatal("Malloc error\n");

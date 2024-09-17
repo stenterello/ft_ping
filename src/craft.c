@@ -9,7 +9,7 @@ t_config    default_config()
     ret.flood = 0;
     ret.preload = 0;
     ret.no_dns = 0;
-    ret.deadline = -1;
+    ret.deadline = 10000;
     ret.timeout = 10;
     ret.pattern = NULL;
     ret.bypass_routing = 0;
