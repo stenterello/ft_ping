@@ -277,7 +277,7 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 				break;
 			}
 			char *tmp = NULL;
-			if (strchr(arg, '.') == NULL)
+			if (strchr(arg, '.') == NULL && !only_digits(arg))
 			{
 				char* router_name = get_router_name();
 				tmp = malloc(sizeof(char) * (strlen(arg) + strlen(router_name) + 1));
