@@ -48,48 +48,29 @@ void    run(t_config *config)
 
     for ( ; about_to_quit == 0 ; )
 	{
-	    // printf("Inizio ciclo\n");
 		gettimeofday(&now, NULL);
 
-		// printf("(config->preload > 0): %d\n", (config->preload > 0));
-		// printf("stats.tx_num == 0: %d\n", stats.tx_num == 0);
-		// printf("calculate_interval(&last, &now): %f\n", calculate_interval(&last, &now));
-		// printf("interval: %f\n", interval);
-        if ((config->preload > 0) || stats.tx_num == 0 || calculate_interval(&last, &now) > interval)
+        if ((config->preload > 0) || stats.tx_num == 0 || calculate_interval(&last, &now) > interval || (config->count > 0 && stats.tx_num < config->count))
 		{
-		    // printf("sending\n");
-			if (config->count && stats.tx_num < config->count)
+			send_ping(sock, &dst_addr, buffer, &last, config);
+			buffer[SEQ + 1] = *(&buffer[SEQ + 1]) + 1;
+			stats.tx_num++;
+			if (config->preload)
 			{
-				send_ping(sock, &dst_addr, buffer, &last, config);
-				buffer[SEQ + 1] = *(&buffer[SEQ + 1]) + 1;
-				stats.tx_num++;
-            	if (config->preload)
-            	{
-            	    config->preload--;
-            	}
+				config->preload--;
 			}
             read_reply(sock, &set, &last, &dst_addr.sin_addr, &stats, config);
 		}
 
 		if (config->count &&
-			((stats.rx_num == config->count))) // TOADD: Exit if last reading has exceeded timeout
+			((stats.rx_num == config->count))) // TODO: Exit if last reading has exceeded timeout
 		{
 			about_to_quit = 1;
 		}
-        // printf("read\n");
-		// printf("%f\n", calculate_interval(&last, &now));
-
 	}
 
 	close(sock);
 	free(buffer);
 
 	print_statistics(config, &stats);
-
-	/* for (t_time_record *ptr = stats.time_records; ptr->next != NULL; ptr = ptr->next)
-	{
-		t_time_record *to_free = ptr;
-		ptr = ptr->next;
-		free(to_free);
-	}; */
 }

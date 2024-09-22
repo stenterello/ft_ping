@@ -107,19 +107,18 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 	}
 	else if (r)
 	{
-		int readbytes = recv(socket, read_buffer, 4096, 0);
+		ssize_t readbytes = recv(socket, read_buffer, 4096, 0);
 		if (readbytes < 0)
 		{
 			perror("recv");
 		}
-		// printf("Fatto\n");
 		gettimeofday(&latency, NULL);
 		char *latency_string = get_latency(last, &latency);
         add_time_record(stats, convert_to_microsec(&latency));
         stats->rx_num++;
         if (!config->flood)
         {
-		    print_received_info(read_buffer, readbytes, latency_string, dst_addr);
+		    print_received_info(read_buffer, (int)readbytes, latency_string, dst_addr);
         }
 		free(latency_string);
 		memset(read_buffer, 0, 4096);
