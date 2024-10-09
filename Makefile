@@ -15,14 +15,15 @@ CC				=	gcc
 FLAGS			=	-Wall -Werror -Wextra -g
 INCLUDE_DIRS	=	./include
 SANITIZER		=	-fsanitize=address
+LIBS			=	-lm
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(FLAGS) $(OBJS) -o $(NAME) -I$(INCLUDE_DIRS)
+	$(CC) $(FLAGS) $(OBJS) -o $(NAME) -I$(INCLUDE_DIRS) $(LIBS)
 
 %.o: %.c
-	$(CC) $(FLAGS) -c $< -o $@ -I$(INCLUDE_DIRS)
+	$(CC) $(FLAGS) -c $< -o $@ -I$(INCLUDE_DIRS) $(LIBS)
 
 clean:
 	rm -f $(OBJS)

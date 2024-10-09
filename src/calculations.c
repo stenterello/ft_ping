@@ -1,4 +1,7 @@
+#include <limits.h>
+#include <math.h>
 #include <ft_ping.h>
+#include <stdio.h>
 
 double	calculate_interval(const struct timeval *t1, const struct timeval *t2)
 {
@@ -10,13 +13,92 @@ double	calculate_interval_micro(const struct timeval *t1, const struct timeval *
 	return ((t2->tv_sec * 1000000 + t2->tv_usec) - (t1->tv_sec * 1000000 + t1->tv_usec));
 }
 
+unsigned long long min_of(t_time_record *records)
+{
+    unsigned long long ret = ULLONG_MAX;
+
+    t_time_record *ptr = records;
+    while (ptr)
+    {
+        if (ptr->time < ret)
+        {
+            ret = ptr->time;
+        }
+        ptr = ptr->next;
+    }
+    return ret;
+}
+
+unsigned long long max_of(t_time_record *records)
+{
+    unsigned long long ret = 0.0;
+
+    t_time_record *ptr = records;
+    while (ptr)
+    {
+        if (ptr->time > ret)
+        {
+            ret = ptr->time;
+        }
+        ptr = ptr->next;
+    }
+    return ret;
+
+}
+
+unsigned long long list_sum(t_time_record *records)
+{
+    t_time_record *ptr = records;
+    unsigned long long ret = 0;
+
+    while (ptr)
+    {
+        ret += ptr->time;
+        ptr = ptr->next;
+    }
+    return ret;
+}
+
+size_t list_len(t_time_record *records)
+{
+    t_time_record *ptr = records;
+    unsigned long long ret = 0;
+
+    while (ptr)
+    {
+        ret++;
+        ptr = ptr->next;
+    }
+    return ret;
+}
+
+unsigned long long avg_of(t_time_record *records)
+{
+    return list_sum(records) / list_len(records);
+}
+
+unsigned long long stddev(t_time_record *records, unsigned long avg)
+{
+    unsigned long ret = 0;
+    t_time_record *ptr = records;
+
+    while (ptr)
+    {
+        ret += powl(((long double)ptr->time - avg), 2);
+        ptr = ptr->next;
+    }
+    ret /= list_len(records);
+    return sqrt(ret);
+}
+
 void	calculate_rtt_statistics(t_stats *stats)
 {
 	if (stats->time_records)
 	{
-		stats->min = stats->time_records->time;
-		stats->max = stats->time_records->time;
-		stats->avg = stats->time_records->time;
+		stats->min = min_of(stats->time_records);
+		stats->max = max_of(stats->time_records);
+		stats->avg = avg_of(stats->time_records);
+        stats->stddev = stddev(stats->time_records, stats->avg);
 	}
 
 	unsigned long long total = 0;
@@ -43,9 +125,13 @@ void	calculate_rtt_statistics(t_stats *stats)
 void	print_statistics(t_config *config, t_stats *stats)
 {
 	printf("--- %s ft_ping statistics ---\n", config->dst_addr);
-	printf("%d packets transmitted, %d packets received, %0.3f%% packet loss\n", stats->tx_num, stats->rx_num, ((float)stats->tx_num / (float)stats->rx_num));
+	printf("%d packets transmitted, %d packets received, %d%% packet loss\n",
+        stats->tx_num, 
+        stats->rx_num, 
+        (int)((100 * ((float)stats->tx_num - (float)stats->rx_num)) / (float)stats->tx_num)
+    );
 	calculate_rtt_statistics(stats);
-	printf("round-trip min/avg/max/stddev = %.3ld/%.3ld/%.3ld/%.3f ms\n", stats->min, stats->avg, stats->max, 0.0);
+	printf("round-trip min/avg/max/stddev = %.3f/%.3f/%.3f/%.3f ms\n", (float)stats->min * .001, (float)stats->avg * .001, (float)stats->max * .001, (float)stats->stddev * .001);
 }
 
 char	*get_latency(struct timeval *last, struct timeval *latency)

@@ -114,7 +114,7 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 		}
 		gettimeofday(&latency, NULL);
 		char *latency_string = get_latency(last, &latency);
-        add_time_record(stats, convert_to_microsec(&latency));
+        add_time_record(stats, calculate_interval_micro(last, &latency));
         stats->rx_num++;
         if (!config->flood)
         {

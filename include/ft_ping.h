@@ -15,6 +15,7 @@
 #include <signal.h>
 #include <errno.h>
 #include <error.h>
+#include <time.h>
 
 #define _XOPEN_SOURCE		700
 
@@ -61,6 +62,7 @@ typedef struct s_stats
 	unsigned long	min;
 	unsigned long	max;
 	unsigned long	avg;
+    unsigned long   stddev;
 	t_time_record	*time_records;
 }				t_stats;
 
