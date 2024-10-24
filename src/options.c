@@ -101,6 +101,30 @@ static const char*	first_non_digit(const char *arg)
 	return NULL;
 }
 
+static int  only_hex_chars(const char *arg)
+{
+    for (int i = 0; arg[i]; i++)
+    {
+        if (!isdigit(arg[i]) && ('F' < arg[i] || 'A' > arg[i]) && ('f' < arg[i] || 'a' > arg[i]))
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static const char*  first_non_hex(const char *arg)
+{
+    for (int i = 0; arg[i]; i++)
+    {
+        if (!isdigit(arg[i]) && ('F' < arg[i] || 'A' > arg[i]) && ('f' < arg[i] || 'a' > arg[i]))
+        {
+            return &arg[i];
+        }
+    }
+    return NULL;
+}
+
 static void		validate_arg(const char* arg, int key)
 {
 	char error_string[300];
@@ -190,6 +214,15 @@ static void		validate_arg(const char* arg, int key)
             {
 			    error(EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", arg, first_non_digit(arg));
             }
+            break;
+        }
+        case PATTERN_FLAG:
+        {
+            if (!only_hex_chars(arg))
+            {
+		        error(EXIT_FAILURE, 0, "error in pattern near %s", first_non_hex(arg));
+            }
+            break;
         }
 		default:
 		{
