@@ -91,12 +91,16 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 {
 	struct timeval      latency;
 	char				read_buffer[4096];
+    struct timeval      timeout;
 
 	memset(&latency, 0, sizeof(latency));
+    memset(&timeout, 0, sizeof(timeout));
 	memset(read_buffer, 0, 4096);
 
-	// TODO: add timeout to select
-	int r = select(socket + 1, set, NULL, NULL, NULL);
+    timeout.tv_sec = 0;
+    timeout.tv_usec = 100;
+
+	int r = select(socket + 1, set, NULL, NULL, &timeout);
 	if (r == -1)
 	{
         if (errno != EINTR && about_to_quit != 1)
@@ -124,5 +128,4 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 		memset(read_buffer, 0, 4096);
         FD_CLR(r, set);
 	}
-	// printf("Uscito\n");
 }
