@@ -7,3 +7,5 @@ tags
 CMakeLists.txt
 build
 cmake-build-debug
+.cache
+compile_commands.json

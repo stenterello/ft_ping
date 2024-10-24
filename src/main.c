@@ -24,11 +24,9 @@ int main(int argc, char **argv)
 	
     t_config	config = default_config();
 
-	// apply command line configurations
 	apply_configuration(argc, argv, &config);
 
     // print_configuration(&config);
-
     run(&config);
     free(config.dst_addr);
 

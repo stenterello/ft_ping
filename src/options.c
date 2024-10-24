@@ -22,6 +22,9 @@
 
 #define MAX_PATTERN			16;
 
+#define IP_TIMESTAMP_TSONLY "tsonly"
+#define IP_TIMESTAMP_TSADDR "tsaddr"
+
 /**
  * Flags enum
  */
@@ -173,6 +176,14 @@ static void		validate_arg(const char* arg, int key)
 			}
 			break;
 		}
+        case IP_TIMESTAMP_FLAG:
+        {
+            if (strncmp(arg, IP_TIMESTAMP_TSONLY, strlen(IP_TIMESTAMP_TSONLY)) && strncmp(arg, IP_TIMESTAMP_TSADDR, strlen(IP_TIMESTAMP_TSADDR)))
+            {
+                error(EXIT_FAILURE, 0, "unsupported timestamp type: %s", arg);
+            }
+            break;
+        }
 		default:
 		{
 			break;
