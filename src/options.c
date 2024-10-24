@@ -14,7 +14,7 @@
 #define PATTERN_FLAG		'p'
 #define NO_ROUTING_FLAG		'r'
 #define PACKET_SIZE_FLAG	's'
-#define TIMESTAMP_FLAG		'T'
+#define TOS_FLAG    		'T'
 #define TTL_FLAG			1
 #define IP_TIMESTAMP_FLAG	2
 
@@ -39,7 +39,7 @@ enum Flags {
 	PATTERN,
 	NO_ROUTING,
 	PACKET_SIZE,
-	TIMESTAMP_KEY,
+	TOS_KEY,
 	TTL,
 	IP_TIMESTAMP,
 	FLAGS_MAX_VALUE
@@ -184,6 +184,13 @@ static void		validate_arg(const char* arg, int key)
             }
             break;
         }
+        case TOS_FLAG:
+        {
+            if (!only_digits(arg))
+            {
+			    error(EXIT_FAILURE, 0, "invalid value (`%s' near `%s')", arg, first_non_digit(arg));
+            }
+        }
 		default:
 		{
 			break;
@@ -253,9 +260,9 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 			// add to config
 			break;
 		}
-		case TIMESTAMP_FLAG:
+		case TOS_FLAG:
 		{
-			validate_arg(arg, TIMESTAMP_FLAG);
+			validate_arg(arg, TOS_FLAG);
 			// add to config
 			break;
 		}
@@ -424,13 +431,13 @@ static void	define_flag(enum Flags flag_value, struct argp_option *flag)
 			flag->group = 0;
 			break;
 		}
-		case TIMESTAMP_KEY:
+		case TOS_KEY:
 		{
-			flag->name = NULL;
+			flag->name = "tos";
 			flag->key = 'T';
-			flag->arg = "timestamp";
+			flag->arg = "NUM";
 			flag->flags = 0;
-			flag->doc = "Define timestamp, can be one of <tsonly|tsandaddr|tsprespec>\n";
+			flag->doc = "set type of service (TOS) to NUM\n";
 			flag->group = 0;
 			break;
 		}
