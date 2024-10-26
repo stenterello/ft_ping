@@ -54,10 +54,10 @@ void    run(t_config *config)
 
 	fd_set   set;
 	FD_ZERO(&set);
-	FD_SET(sock, &set);
 
     for ( ; about_to_quit == 0 ; )
 	{
+	    FD_SET(sock, &set);
 		gettimeofday(&now, NULL);
 
         if (time_to_send(config, &stats, calculate_interval(&last, &now), interval))
