@@ -100,7 +100,7 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
     timeout.tv_sec = 0;
     timeout.tv_usec = 100;
 
-	int r = select(socket + 1, set, NULL, NULL, &timeout);
+	int r = select(socket + 1, &set2, NULL, NULL, &timeout);
 	if (r == -1)
 	{
         if (errno != EINTR && about_to_quit != 1)

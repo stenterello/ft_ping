@@ -69,8 +69,9 @@ void    run(t_config *config)
 			{
 				config->preload--;
 			}
-            read_reply(sock, &set, &last, &dst_addr.sin_addr, &stats, config);
 		}
+
+        read_reply(sock, &set, &last, &dst_addr.sin_addr, &stats, config);
 
 		if (config->count &&
 			((stats.rx_num == config->count))) // TODO: Exit if last reading has exceeded timeout
