@@ -239,7 +239,7 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 	{
 		case VERBOSE_FLAG:
 		{
-			config->verbose = 1;
+			config->options |= VERBOSE_OPTION;
 			break;
 		}
 		case COUNT_FLAG:
@@ -250,7 +250,7 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 		}
 		case FLOOD_FLAG:
 		{
-			config->flood = 1;
+			config->options |= FLOOD_OPTION;
 			break;
 		}
 		case PRELOAD_FLAG:
@@ -261,7 +261,7 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 		}
 		case NO_DNS_FLAG:
 		{
-			config->no_dns = 1;
+			config->options |= NO_DNS_OPTION;
 			break;
 		}
 		case DEADLINE_FLAG:
@@ -284,13 +284,13 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 		}
 		case NO_ROUTING_FLAG:
 		{
-			config->bypass_routing = 1;
+			config->options |= BYPASS_ROUTING_OPTION;
 			break;
 		}
 		case PACKET_SIZE_FLAG:
 		{
 			validate_arg(arg, PACKET_SIZE_FLAG);
-			// add to config
+			config->packet_size = atoi(arg);
 			break;
 		}
 		case TOS_FLAG:
@@ -341,14 +341,16 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 				strcat(tmp, router_name);
 				free(router_name);
 				config->dst_addr = malloc(sizeof(char) * (strlen(tmp) + 1));
-				if (!config->dst_addr) {
+				if (!config->dst_addr)
+                {
 					fatal("Malloc error\n");
 				}
 				strncpy(config->dst_addr, tmp, strlen(tmp) + 1);
 				free(tmp);
 			} else {
 				config->dst_addr = malloc(sizeof(char) * (strlen(arg) + 1));
-				if (!config->dst_addr) {
+				if (!config->dst_addr)
+                {
 					fatal("Malloc error\n");
 				}
 				strncpy(config->dst_addr, arg, strlen(arg) + 1);

@@ -55,7 +55,7 @@ void    run(t_config *config)
 	setvbuf(stdout, NULL, _IOLBF, 0);
 	resolve_address(config, &dst_addr);
 	first_line_info(config, &dst_addr.sin_addr);
-	if (config->flood)
+	if (config->options & FLOOD_OPTION)
 	{
 		interval = 100;
 	}

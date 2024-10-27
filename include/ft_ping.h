@@ -28,33 +28,47 @@
  * 	-[custom flag] print timestamp in human readable format
  */
 
+
+#define VERBOSE_OPTION             1
+#define BYPASS_ROUTING_OPTION      2
+#define NO_DNS_OPTION              4
+#define FLOOD_OPTION               8
+
 /*
  * @brief This struct contains all the configuration for the ping command.
  */
 typedef struct	s_config
 {
-	int			verbose;
-	long long	count;
-	int			flood;
-	int			preload;
-	int			no_dns;
-	int			deadline;
-	int			timeout;
-	char		*pattern;
-	int			bypass_routing;
-	int			packet_size;
-	int			timestamp_flag;
-	int			ttl;
-	int			ip_timestamp;
-	char		*dst_addr;
+    unsigned char   options;
+	long long	    count;
+	int			    preload;
+	int 			deadline;
+	int	    		timeout;
+	int 			packet_size;
+	int	    		timestamp_flag;
+	int		    	ttl;
+	int			    ip_timestamp;
+    char	    	*pattern;
+	char    		*dst_addr;
 }				t_config;
 
+
+/**
+ * @brief This struct is used to store statistics
+ *        about each packet returned; it is later used
+ *        to perform calculations on rtt stats
+ */
 typedef struct	s_time_record
 {
 	unsigned long			time;
 	struct s_time_record	*next;
 }				t_time_record;
 
+
+/**
+ * @brief This struct is used to store all relevant
+ *        info about statistics to print at ping's end
+ */
 typedef struct s_stats
 {
 	int				tx_num;
@@ -89,6 +103,9 @@ enum Type
 	TRACEROUTE
 };
 
+/**
+ * @brief Enum to identify each field address in a ICMP packet
+ */
 enum Sections
 {
 	TYPE = 0,

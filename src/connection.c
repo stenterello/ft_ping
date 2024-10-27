@@ -120,7 +120,7 @@ void	read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr *d
 		char *latency_string = get_latency(last, &latency);
         add_time_record(stats, calculate_interval_micro(last, &latency));
         stats->rx_num++;
-        if (!config->flood)
+        if (~(config->options & FLOOD_OPTION))
         {
 		    print_received_info(read_buffer, (int)readbytes, latency_string, dst_addr);
         }

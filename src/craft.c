@@ -4,15 +4,16 @@ t_config    default_config()
 {
     t_config    ret;
 
-    ret.verbose = 0;
+    ret.options = 0;
+    // ret.verbose = 0;
     ret.count = 0;
-    ret.flood = 0;
+    // ret.flood = 0;
     ret.preload = 0;
-    ret.no_dns = 0;
+    // ret.no_dns = 0;
     ret.deadline = 10000;
     ret.timeout = 10;
     ret.pattern = NULL;
-    ret.bypass_routing = 0;
+    // ret.bypass_routing = 0;
     ret.packet_size = 56;
     ret.timestamp_flag = -1;
     ret.ttl = 0;
