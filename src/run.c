@@ -24,8 +24,8 @@ int time_to_send(const t_config *config, const t_stats *stats, double interval_p
 {
     if ((config->preload > 0) 
         || stats->tx_num == 0
-        || interval_passed > interval
-        || (config->count > 0 && stats->tx_num < config->count))
+        || (interval_passed > interval && !config->count)
+        || (config->count > 0 && stats->tx_num < config->count && interval_passed > interval))
     {
         return 1;
     }
