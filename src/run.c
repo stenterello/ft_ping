@@ -32,6 +32,16 @@ int time_to_send(const t_config *config, const t_stats *stats, double interval_p
     return 0;
 }
 
+int has_to_quit(const t_config *config, const t_stats *stats)
+{
+	if (config->count &&
+		((stats->rx_num == config->count))) // TODO: Exit if last reading has exceeded timeout
+    {
+        return 1;
+    }
+    return 0;
+}
+
 void    run(t_config *config)
 {
 	char                *buffer = craft_packet(config);
@@ -73,8 +83,7 @@ void    run(t_config *config)
 
         read_reply(sock, &set, &last, &dst_addr.sin_addr, &stats, config);
 
-		if (config->count &&
-			((stats.rx_num == config->count))) // TODO: Exit if last reading has exceeded timeout
+        if (has_to_quit(config, &stats))
 		{
 			about_to_quit = 1;
 		}
