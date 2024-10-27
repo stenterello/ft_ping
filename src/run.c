@@ -51,6 +51,11 @@ void    run(t_config *config)
 	t_stats				stats;
 	double				interval = DEFAULT_INTERVAL;
 
+    if (config->pattern)
+    {
+         
+    }
+
     prepare_structs(&dst_addr, &now, &last, &stats);
 	setvbuf(stdout, NULL, _IOLBF, 0);
 	resolve_address(config, &dst_addr);

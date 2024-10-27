@@ -37,6 +37,21 @@ char	*default_payload(int size)
 	return ret;
 }
 
+char    *custom_payload(const char *pattern, int size)
+{
+    char *ret = malloc(sizeof(char) * size + 1);
+    if (!ret)
+    {
+        fatal("Malloc error");
+    }
+
+    for (int i = 0; i < size; i++)
+    {
+        ret[i] = pattern[i % strlen(pattern)];
+    }
+    return ret;
+}
+
 void printBits(size_t const size, void const * const ptr)
 {
     unsigned char *b = (unsigned char*) ptr;
@@ -79,23 +94,11 @@ char    *craft_packet(const t_config *config)
     packet[CODE] = 0;
     packet[CHECKSUM] = 0;
     packet[CHECKSUM + 1] = 0;
-    // print_packet(packet, config);
     short identifier = 0x1234;
     short sequence = 0x0001;
-	// packet[SEQ] = sequence;
-    // printf("Adding: %2x\n", identifier << 8);
-    // printf("Adding: %2x\n", identifier >> 8);
     packet[ID] = identifier << 8;
     packet[ID + 1] = identifier >> 8;
-	// printBits(2, &sequence);
-	// sequence >>= 8;
-	// printBits(2, &sequence);
-    // packet[SEQ] = sequence >> 8;
-    // printf("Printing...\n");
-    // print_packet(packet, config);
-    // packet[SEQ + 1] = (char)(sequence << 8);
-    // print_packet(packet, config);
-	char *payload = default_payload(config->packet_size);
+	char *payload = (config->pattern) ? custom_payload(config->pattern, config->packet_size) : default_payload(config->packet_size);
 	strncpy(&packet[DATA], payload, config->packet_size);
 	free(payload);
 
