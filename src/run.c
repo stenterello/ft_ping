@@ -51,11 +51,6 @@ void    run(t_config *config)
 	t_stats				stats;
 	double				interval = DEFAULT_INTERVAL;
 
-    if (config->pattern)
-    {
-         
-    }
-
     prepare_structs(&dst_addr, &now, &last, &stats);
 	setvbuf(stdout, NULL, _IOLBF, 0);
 	resolve_address(config, &dst_addr);
@@ -78,6 +73,8 @@ void    run(t_config *config)
         if (time_to_send(config, &stats, calculate_interval(&last, &now), interval))
 		{
 			send_ping(sock, &dst_addr, buffer, &last, config);
+            // fix the fact that seq number can be more than one byte
+            // (this is actually a workaround)
 			buffer[SEQ + 1] = *(&buffer[SEQ + 1]) + 1;
 			stats.tx_num++;
 			if (config->preload)
