@@ -122,12 +122,12 @@ void	calculate_rtt_statistics(t_stats *stats)
 	stats->avg = total / counter;
 }
 
-void	print_statistics(t_config *config, t_stats *stats)
+void	print_statistics(const t_config *config, t_stats *stats)
 {
 	printf("--- %s ft_ping statistics ---\n", config->dst_addr);
 	printf("%d packets transmitted, %d packets received, %d%% packet loss\n",
-        stats->tx_num, 
-        stats->rx_num, 
+        stats->tx_num,
+        stats->rx_num,
         (int)((100 * ((float)stats->tx_num - (float)stats->rx_num)) / (float)stats->tx_num)
     );
 	calculate_rtt_statistics(stats);

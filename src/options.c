@@ -338,10 +338,11 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
                 {
                     fatal("Malloc error\n");
                 }
+                memset(config->dst_addr, 0, 17);
                 strncpy(config->dst_addr, "127.0.0.1", 16);
                 break;
             }
-			if (strchr(arg, '.') == NULL && !only_digits(arg) && get_router_name())
+			if (arg && strchr(arg, '.') == NULL && !only_digits(arg) && get_router_name())
 			{
 				char* router_name = get_router_name();
 				char *tmp = malloc(sizeof(char) * (strlen(arg) + strlen(router_name) + 1));
@@ -360,7 +361,9 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 				}
 				strncpy(config->dst_addr, tmp, strlen(tmp) + 1);
 				free(tmp);
-			} else {
+			}
+			else
+			{
 				config->dst_addr = malloc(sizeof(char) * (strlen(arg) + 1));
 				if (!config->dst_addr)
                 {

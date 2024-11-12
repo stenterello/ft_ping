@@ -134,7 +134,7 @@ void				read_reply(int socket, fd_set *set, struct timeval *last, struct in_addr
 void				print_received_info(char *res, int len, char *latency_string, struct in_addr *dst_addr);
 double				calculate_interval(const struct timeval *t1, const struct timeval *t2);
 double				calculate_interval_micro(const struct timeval *t1, const struct timeval *t2);
-void				print_statistics(t_config *config, t_stats *stats);
+void				print_statistics(const t_config *config, t_stats *stats);
 char				*get_latency(struct timeval *last, struct timeval *latency);
 unsigned long		convert_to_microsec(struct timeval *time);
 
