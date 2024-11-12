@@ -40,4 +40,3 @@ Next *todos*:
 - craft checksum before sending packet;
 - check identifier and sequence correctness;
 - handle flood with -f option { too many packets are sent compared to ping? };
-- fix packet loss percentage in print_statistics;

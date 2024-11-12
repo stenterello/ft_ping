@@ -24,8 +24,18 @@ int time_to_send(const t_config *config, const t_stats *stats, double interval_p
 {
     if ((config->preload > 0) 
         || stats->tx_num == 0
-        || interval_passed > interval
-        || (config->count > 0 && stats->tx_num < config->count))
+        || (interval_passed > interval && !config->count)
+        || (config->count > 0 && stats->tx_num < config->count && interval_passed > interval))
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int has_to_quit(const t_config *config, const t_stats *stats)
+{
+	if (config->count &&
+		((stats->rx_num == config->count))) // TODO: Exit if last reading has exceeded timeout
     {
         return 1;
     }
@@ -45,7 +55,7 @@ void    run(t_config *config)
 	setvbuf(stdout, NULL, _IOLBF, 0);
 	resolve_address(config, &dst_addr);
 	first_line_info(config, &dst_addr.sin_addr);
-	if (config->flood)
+	if (config->options & FLOOD_OPTION)
 	{
 		interval = 100;
 	}
@@ -63,6 +73,8 @@ void    run(t_config *config)
         if (time_to_send(config, &stats, calculate_interval(&last, &now), interval))
 		{
 			send_ping(sock, &dst_addr, buffer, &last, config);
+            // fix the fact that seq number can be more than one byte
+            // (this is actually a workaround)
 			buffer[SEQ + 1] = *(&buffer[SEQ + 1]) + 1;
 			stats.tx_num++;
 			if (config->preload)
@@ -73,8 +85,7 @@ void    run(t_config *config)
 
         read_reply(sock, &set, &last, &dst_addr.sin_addr, &stats, config);
 
-		if (config->count &&
-			((stats.rx_num == config->count))) // TODO: Exit if last reading has exceeded timeout
+        if (has_to_quit(config, &stats))
 		{
 			about_to_quit = 1;
 		}

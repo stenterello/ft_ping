@@ -28,6 +28,10 @@ int main(int argc, char **argv)
 
     // print_configuration(&config);
     run(&config);
+    if (config.pattern)
+    {
+        free(config.pattern);
+    }
     free(config.dst_addr);
 
 	return 0;
