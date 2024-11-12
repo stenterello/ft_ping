@@ -327,11 +327,24 @@ static error_t	parser_function(int key, char *arg, struct argp_state *state)
 			{
 				break;
 			}
-			char *tmp = NULL;
-			if (strchr(arg, '.') == NULL && !only_digits(arg))
+			if (arg && !strncmp(arg, "localhost", 9))
+            {
+                if (config->dst_addr)
+                {
+                    free(config->dst_addr);
+                }
+                config->dst_addr = malloc(sizeof(char) * 17);
+                if (!config->dst_addr)
+                {
+                    fatal("Malloc error\n");
+                }
+                strncpy(config->dst_addr, "127.0.0.1", 16);
+                break;
+            }
+			if (strchr(arg, '.') == NULL && !only_digits(arg) && get_router_name())
 			{
 				char* router_name = get_router_name();
-				tmp = malloc(sizeof(char) * (strlen(arg) + strlen(router_name) + 1));
+				char *tmp = malloc(sizeof(char) * (strlen(arg) + strlen(router_name) + 1));
 				if (!tmp)
 				{
 					fatal("Malloc error\n");

@@ -11,18 +11,7 @@ void    resolve_address(t_config *config, struct sockaddr_in *dst_addr)
 
     hint.ai_family = AF_INET;
 
-    if (!strncmp(config->dst_addr, "localhost", 9))
-    {
-        free(config->dst_addr);
-        config->dst_addr = malloc(sizeof(char) * 17);
-        if (!config->dst_addr)
-        {
-            fatal("Malloc error\n");
-        }
-        strncpy(config->dst_addr, "127.0.0.1", 16);
-    }
-
-	if (getaddrinfo(config->dst_addr, NULL, &hint, &addrinfo) != 0)
+    if (getaddrinfo(config->dst_addr, NULL, &hint, &addrinfo) != 0)
 	{
 		error(EXIT_FAILURE, 0, "unknown host");
     }
